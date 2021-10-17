@@ -26,7 +26,7 @@ function findCharacteristicEquationRoots()
     syms lambda;
 
     disp(newline + "========= Пункт 2 =========" + ...
-         newline + "определение матрицы состояния " + ...
+         newline + "Определение матрицы состояния " + ...
          "системы и нахождение корней характеристического" + ...
          "уравнения: ");
     SM = lambda * I - A;
@@ -38,7 +38,6 @@ function findCharacteristicEquationRoots()
     disp(vpa(charEquation, 5));
 
     eqn = charEquation == 0;
-    disp(eqn);
     disp('Корни характеристического уравнения:');
     disp(vpa(solve(eqn, lambda), 5));
 end

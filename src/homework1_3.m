@@ -33,7 +33,7 @@ function solveSylvesterMethod(lambda1, lambda2, lambda3)
 
     A = [0   1   0; 
          0   0   1; 
-         a0 * (-1) a1 * (-1) a2 * (-1)]; % Матрица состояния системы
+         -a0 -a1 -a2]; % Матрица состояния системы
 
     I = [1 0 0; 
          0 1 0;

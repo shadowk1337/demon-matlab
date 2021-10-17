@@ -1,5 +1,7 @@
 % Пункт 4, получение аналитического выражения при 
 % ступенчатом входном воздействии
+% Для этого пункта понадобится пакет Symbolic Math Toolbox
+% Скачать пакет: Home->Add-ons->"Get Add-Ons"
 
 findAnalyticalExpression();
 
