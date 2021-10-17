@@ -24,11 +24,17 @@ function solveSylvesterMethod(lambda1, lambda2, lambda3)
     % Для метода Сильвестра используется формула: 
     % K(t) = exp(At) = 
 
+    a0 = input('Введите a0: ');
+    a1 = input('Введите a1: ');
+    a2 = input('Введите a2: ');
+    a3 = input('Введите a3: ');
+
     syms t; 
 
-    A = [0       1       0; 
-         0       0       1; 
-         lambda1 lambda2 lambda3]; % Матрица состояния системы
+    A = [0   1   0; 
+         0   0   1; 
+         a0 * (-1) a1 * (-1) a2 * (-1)]; % Матрица состояния системы
+
     I = [1 0 0; 
          0 1 0;
          0 0 1]; % Единичная матрица
@@ -57,11 +63,20 @@ function D_Z = MatrixZ(A, MLambdaLeft, MLambdaRight, ...
 end
 
 function solveCayleyMethod(lambda1, lambda2, lambda3)
+    a0 = input('Введите a0: ');
+    a1 = input('Введите a1: ');
+    a2 = input('Введите a2: ');
+    a3 = input('Введите a3: ');
+
     syms t;
 
     I = [1 0 0;
          0 1 0;
          0 0 1]; % Единичная матрица
+
+    A = [0   1   0;
+         0   0   1;
+         a0 * (-1) a1 * (-1) a2 * (-1)];
 
     f1 = exp(lambda1 * t);
     f2 = exp(lambda2 * t);
@@ -84,7 +99,9 @@ function solveCayleyMethod(lambda1, lambda2, lambda3)
     disp('E:')
     disp(vpa(E, 5));
     
-    K = C \ E;
+    AInv = inv(C) * E;
+
+    K = AInv(1,:) * I + AInv(2,:) * A + AInv(3,:) * (A * A);
 
     disp("Матрица перехода методом Кэли-Гамильтона: ");
     disp(vpa(K, 5));

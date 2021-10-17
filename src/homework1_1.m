@@ -14,7 +14,7 @@ function findSystemDifferentialEquation()
     Ra = 10; % Rя
     Rk = 0.01; % Rк
     Kg = 62500; % Kг
-    i = 20; % i
+    i = 0.05; % i
     Te = La / Ra; % Тэ
 
     a0 = (Kd * Ky * Kcap * Kg * Rk * i) / (Tm * Te);
