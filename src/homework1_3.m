@@ -11,8 +11,8 @@ function findTransitionMatrix()
     lambda2 = input('Введите лямбду2: ');
     lambda3 = input('Введите лямбду3: ');
 
-    choice = input("Y - решить методом Сильвестра / " + ...
-                   "N - решить методом Кэли-Гамильтона [Y/N]: ", 's');
+    choice = input("y - решить методом Сильвестра / " + ...
+                   "n - решить методом Кэли-Гамильтона [y/n]: ", 's');
     if (ischar(choice) && lower(choice) == 'y')
         solveSylvesterMethod(lambda1, lambda2, lambda3);
     else
