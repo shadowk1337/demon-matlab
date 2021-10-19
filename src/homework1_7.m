@@ -120,10 +120,22 @@ function nyquistCriteria()
 
     syms s;
 
-    Ws = (73.125*exp(-0.007*s))/(s*(0.00036*s^2 + 0.049*s + 1.0));
+%     [n, d] = numden(Ws);
+
+    nCoef = coeffs(n);
+    dCoef = coeffs(d);
+
     inp = input("Построить график Найквиста? [y/n]: ", 's');
     if (ischar(inp) && lower(inp) == 'y')
-        nyquist(tf([2 5 1], [1 2 3]));
+        l = size(max(size(nCoef)));
+        for i = 1:max(size(nCoef))
+            l(i) = nCoef(i);
+        end
+        r = size(max(size(dCoef)));
+        for i = 1:max(size(dCoef))
+            r(i) = dCoef(i);
+        end
+        nyquist(tf(l, r));
         disp("Если на графике точка (-1; 0), подсвеченная красным крестиком" + ...
             " лежит внутри фигуры Найквиста, то система устойчива, если не" + ...
             "лежит внутри - то система неустойчива");
