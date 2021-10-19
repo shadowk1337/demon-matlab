@@ -30,7 +30,7 @@ exp(-126.84*t)*(1560.1 + 2.8422e-14i) - exp(t*(- 4.6373 - 39.748i))*(780.06 + 15
     disp(vpa(integEq(1,:), 4));
     disp(vpa(int(integEq(1,:), lambda, 0, t), 4));
     
-    MInt = int(integEq, lambda, 0, t) * 12800;
+    MInt = int(integEq, lambda, 0, t) * 13600;
 
     time = 0:0.005:1;
     y = zeros(size(time));

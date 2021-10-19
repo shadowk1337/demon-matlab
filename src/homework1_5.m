@@ -1,6 +1,8 @@
 % Пункт 5, нахождение передаточной функции разомкнутой системы,
 % передаточной функции замкнутой системы и передаточной функции
 % системы по ошибке
+% Для этого пункта понадобится пакет Symbolic Math Toolbox
+% Скачать пакет: Home->Add-ons->"Get Add-Ons"
 
 findTransferFunction();
 
@@ -19,7 +21,7 @@ function findTransferFunction()
 
     syms s;
 
-    disp(newline + "========= Пункт 6 =========" + ...
+    disp(newline + "========= Пункт 5 =========" + ...
          newline + "Нахождение передаточной функции разомкнутой " + ...
          "системы, передаточной функции замкнутой системы и " + ...
          "передаточной функции системы по ошибке: ");
@@ -66,7 +68,8 @@ function findSystemReaction(Ng, iOhm, Kcap, Ky, Kd, Kg, ...
          Rk, 0, Tm, Te, s) * (Ng / s);
     Nt = ilaplace(Ns);
     disp(vpa(Nt, 4));
-    time = 0:0.005:1;
+    
+    time = 0.001:0.005:1;
     y = zeros(size(time));
     for i = 1:max(size(time))
         y(i) = subs(Nt, time(i));
