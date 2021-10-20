@@ -27,7 +27,10 @@ function rouseCriteria()
 
     syms s;
 
-    Fs = 1/(0.013675*s*(0.00036*s^2 + 0.049*s + 1.0) + 1.0); % при t = 0
+%     Fs = 1/(0.013675*s*(0.00036*s^2 + 0.049*s + 1.0) + 1.0); % при t = 0
+%     Fs = 1/(0.0071111*s*(0.000312*s^2 + 0.038*s + 1.0) + 1.0)
+%     Fs = 1/(0.00625*s*exp(0.007*s)*(0.00035*s^2 + 0.0405*s + 1.0) + 1.0);
+
     Ds = vpa(1 / Fs, 4);
     DsCoeffs = vpa(coeffs(Ds), 4);
 
@@ -120,24 +123,30 @@ function nyquistCriteria()
 
     syms s;
 
-%     [n, d] = numden(Ws);
+%     Fs = 1/(0.013675*s*(0.00036*s^2 + 0.049*s + 1.0) + 1.0);
+%     Fs = 1/(0.0071111*s*exp(0.007*s)*(0.000312*s^2 + 0.038*s + 1.0) + 1.0);
+%     Fs = 1/(0.00625*s*exp(0.007*s)*(0.00035*s^2 + 0.0405*s + 1.0) + 1.0);
 
-    nCoef = coeffs(n);
-    dCoef = coeffs(d);
+    nCoef = 1;
+
+    Ds = vpa(1 / Fs, 4);
+    dCoef = vpa(coeffs(Ds), 4);
 
     inp = input("Построить график Найквиста? [y/n]: ", 's');
     if (ischar(inp) && lower(inp) == 'y')
-        l = size(max(size(nCoef)));
-        for i = 1:max(size(nCoef))
-            l(i) = nCoef(i);
-        end
-        r = size(max(size(dCoef)));
-        for i = 1:max(size(dCoef))
-            r(i) = dCoef(i);
-        end
+        l = toCell(nCoef);
+        r = toCell(dCoef);
         nyquist(tf(l, r));
-        disp("Если на графике точка (-1; 0), подсвеченная красным крестиком" + ...
-            " лежит внутри фигуры Найквиста, то система устойчива, если не" + ...
+        disp("Если на графике точка (-1; 0)" + ...
+            " лежит внутри фигуры Найквиста, то система устойчива, если не " + ...
             "лежит внутри - то система неустойчива");
     end
+end
+
+function [v] = toCell(D)
+    ve = size(max(size(D)));
+    for i = 1:max(size(D))
+        ve(i) = D(i);
+    end
+    v = ve;
 end
