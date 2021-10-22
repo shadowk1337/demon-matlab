@@ -3,37 +3,42 @@
 
 findSystemStability();
 
-function findSystemStability()
-    a0 = input('Введите a0: ');
-    a1 = input('Введите a1: ');
-    a2 = input('Введите a2: ');
-    a3 = input('Введите a3: ');
-
-
-    buildLogarithmicAmplitudePhaseCharacteristic();
+function findSystemStability(Data, CalcData, AdditionalData)
+    buildLogarithmicAmplitudePhaseCharacteristic(Data, CalcData, ...
+        AdditionalData);
 
     choice = input("y - решить по критериям Рауса и Михайлова/ " + ...
                    "n - решить по критериям Гурвица и Найквиста" + ...
                    " [y/n]: ", 's');
 
     if (ischar(choice) && lower(choice) == 'y')
-        rouseCriteria();
-        nyquistCriteria();
+        rouseCriteria(Data, CalcData, AdditionalData);
+        mikhailovCriteria(Data, CalcData, AdditionalData);
     else
-        hurwitzCriteria(a0, a1, a2, a3);
-        mikhailovCriteria(a0, a1, a2, a3);
+        hurwitzCriteria(Data, CalcData, AdditionalData);
+        nyquistCriteria(Data, CalcData, AdditionalData);
     end
 end
 
-function buildLogarithmicAmplitudePhaseCharacteristic()
+function buildLogarithmicAmplitudePhaseCharacteristic(Data, CalcData, ...
+    AdditionalData)
     syms s;
 
     Ws = (365.62*exp(-0.009*s))/(s*(0.00036*s^2 + 0.049*s + 1.0));
-    W = tf(365.62, [0.00036, 0.049, 1, 0]);
+    [n, d] = numden(Ws);
+    div = d(3);
+    num = num(1) / div;
+    den(1) = d(1) / div;
+    den(2) = d(2) / div;
+    den(3) = 1;
+%     W = tf(365.62, [0.00036, 0.049, 1, 0]);
+    disp(num);
+    disp(den);
+    W = tf(num, den);
     bode(W,1e-1:0.1:1e4); % ЛАФЧХ
 end
 
-function rouseCriteria()
+function rouseCriteria(Data, CalcData, AdditionalData)
     disp(newline + "Метод Рауса");
 
     syms s;
@@ -74,7 +79,7 @@ function rouseCriteria()
     end
 end
 
-function hurwitzCriteria(a0, a1, a2, a3)
+function hurwitzCriteria(Data, CalcData, AdditionalData)
     disp(newline + "Метод Гурвица");
 
     disp("Характеристическое уравнение: ");
@@ -104,7 +109,7 @@ function hurwitzCriteria(a0, a1, a2, a3)
     end
 end
 
-function mikhailovCriteria(a0, a1, a2, a3)
+function mikhailovCriteria(Data, CalcData, AdditionalData)
     disp(newline + "Метод Михайлова");
     
     disp("Характеристическое уравнение: ");
@@ -129,7 +134,7 @@ function mikhailovCriteria(a0, a1, a2, a3)
     end
 end
 
-function nyquistCriteria()
+function nyquistCriteria(Data, CalcData, AdditionalData)
     disp(newline + "Метод Найквиста");
 
     syms s;
