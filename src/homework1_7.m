@@ -9,8 +9,11 @@ function findSystemStability()
     a2 = input('Введите a2: ');
     a3 = input('Введите a3: ');
 
+
+    buildLogarithmicAmplitudePhaseCharacteristic();
+
     choice = input("y - решить по критериям Рауса и Михайлова/ " + ...
-                   "n - решить по критериям Гурвица И Найквиста" + ...
+                   "n - решить по критериям Гурвица и Найквиста" + ...
                    " [y/n]: ", 's');
 
     if (ischar(choice) && lower(choice) == 'y')
@@ -20,6 +23,14 @@ function findSystemStability()
         hurwitzCriteria(a0, a1, a2, a3);
         mikhailovCriteria(a0, a1, a2, a3);
     end
+end
+
+function buildLogarithmicAmplitudePhaseCharacteristic()
+    syms s;
+
+    Ws = (365.62*exp(-0.009*s))/(s*(0.00036*s^2 + 0.049*s + 1.0));
+    W = tf(365.62, [0.00036, 0.049, 1, 0]);
+    bode(W,1e-1:0.1:1e4); % ЛАФЧХ
 end
 
 function rouseCriteria()

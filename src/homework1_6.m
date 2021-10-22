@@ -10,7 +10,7 @@
 LA();
 
 function LA()
-    inp = input("Построить ЛАФЧХ графика? [y/n]: ", 's');
+    inp = input("Построить ЛАЧХ графика? [y/n]: ", 's');
     if (ischar(inp) && lower(inp) == 'y')
         buildLogarithmicAmplitudePhaseCharacteristic();
     end
@@ -55,11 +55,16 @@ exp(-126.73*t)*(1561.2 - 2.1316e-14i) - exp(t*(- 4.6359 - 39.766i))*(780.58 + 15
 end
 
 function buildLogarithmicAmplitudePhaseCharacteristic()
-    syms s;
+    syms s w;
 
-    Ws = (365.62*exp(-0.009*s))/(s*(0.00036*s^2 + 0.049*s + 1.0));
-    W = tf(365.62, [0.00036, 0.049, 1, 0]);
-    bode(W,0.01:0.01:100);
+    Ws = 365.62 / (s*(0.00036*s^2 + 0.049*s + 1.0));
+    Ws = subs(Ws, w * 1i);
+    wt = 0.1:1:1e3;
+    Lw = zeros(size(wt));
+    for i = 1:max(size(wt))
+        Lw(i) = 20 * log10(abs(subs(Ws, wt(i))));
+    end
+    semilogx(wt, Lw);
 end
 
 function buildDiscreteView(A, B)

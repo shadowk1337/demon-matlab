@@ -1,21 +1,19 @@
 % Пункт 1, составление единого ДУ системы
 % https://docs.google.com/document/d/1hvCyU4ntI7h5q_E7bBjpu5ZjoYIeHKde/edit
 
-findSystemDifferentialEquation();
-
 function findSystemDifferentialEquation()
-    Ng = input('Введите Nзад: ');
-    Ky = input('Введите Kу: ');
-    La = input('Введите Lя: ');
-    Kd = input('Введите Kд: ');
-    Tm = input('Введите Tм: ');
-
-    Kcap = 0.2; % Kцап
-    Ra = 10; % Rя
-    Rk = 0.01; % Rк
-    Kg = 62500; % Kг
-    i = 0.05; % i
-    Te = La / Ra; % Тэ
+%     Ng = input('Введите Nзад: ');
+%     Ky = input('Введите Kу: ');
+%     La = input('Введите Lя: ');
+%     Kd = input('Введите Kд: ');
+%     Tm = input('Введите Tм: ');
+% 
+%     Kcap = 0.2; % Kцап
+%     Ra = 10; % Rя
+%     Rk = 0.01; % Rк
+%     Kg = 62500; % Kг
+%     i = 0.05; % i
+%     Te = La / Ra; % Тэ
 
     a0 = (Kd * Ky * Kcap * Kg * Rk * i) / (Tm * Te);
     a1 = 1 / (Tm * Te);
