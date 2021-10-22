@@ -4,7 +4,7 @@
 % Для этого пункта понадобится пакет Symbolic Math Toolbox
 % Скачать пакет: Home->Add-ons->"Get Add-Ons"
 
-findCharacteristicEquationRoots();
+% findCharacteristicEquationRoots();
 
 function findCharacteristicEquationRoots()
     a0 = input('Введите a0: ');

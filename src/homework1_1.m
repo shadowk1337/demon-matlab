@@ -1,7 +1,8 @@
 % Пункт 1, составление единого ДУ системы
 % https://docs.google.com/document/d/1hvCyU4ntI7h5q_E7bBjpu5ZjoYIeHKde/edit
 
-function findSystemDifferentialEquation()
+function [a, b] = findSystemDifferentialEquation(Kd, Ky, Kcap, Kg, ...
+                                             Rk, i, Tm, Te)
 %     Ng = input('Введите Nзад: ');
 %     Ky = input('Введите Kу: ');
 %     La = input('Введите Lя: ');
@@ -37,4 +38,7 @@ function findSystemDifferentialEquation()
     
     disp('Число b0 = (Kд*Kу*Kцап*Kг*Rк*i)/(Tм*Tэ) = ');
     disp(vpa(b0, 5));
+    
+    a = [a0 a1 a2 a3];
+    b = b0;
 end

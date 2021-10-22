@@ -14,23 +14,36 @@ addpath("./src");
 main();
 
 function main()
-%     Ng = input('Введите Nзад: ');
-%     Ky = input('Введите Kу: ');
-%     La = input('Введите Lя: ');
-%     Kd = input('Введите Kд: ');
-%     Tm = input('Введите Tм: ');
-% 
-%     Kcap = 0.2; % Kцап
-%     Ra = 10; % Rя
-%     Rk = 0.01; % Rк
-%     Kg = 62500; % Kг
-%     i = 0.05; % i
-%     Te = La / Ra; % Тэ
+    Ng = input('Введите Nзад: ');
+    Ky = input('Введите Kу: ');
+    La = input('Введите Lя: ');
+    Kd = input('Введите Kд: ');
+    Tm = input('Введите Tм: ');
+    
+    Kcap = 0.2; % Kцап
+    Ra = 10; % Rя
+    Rk = 0.01; % Rк
+    Kg = 62500; % Kг
+    i = 0.05; % i
+    Te = La / Ra; % Тэ
 
-    disp(pwd);
+%     disp(pwd);
 
-    findSystemDifferentialEquation();
+    inp = input("y - запустить пункт 1, n - завершить работу " + ...
+                "программы [y/n]: ", 's');
+    [a, b] = homework1_1(Kd, Ky, Kcap, Kg, Rk, i, Tm, Te);
+    disp(a);
 
 end
 
-% findSystemDifferentialEquation();
+function [ans] = userInputInit(str)
+	out = "y - запустить " + str + ", n - завершить работу " + ...
+          "программы [y/n]: "
+    inp = input(out, 's');
+    
+    if (ischar(inp) && lower(inp) == 'y')
+        return true;
+    else
+        
+    end
+end
