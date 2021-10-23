@@ -30,6 +30,7 @@ function main()
     Data('Rk')      = 0.01;     % Rк
     Data('Kg')      = 62500;    % Kг
     Data('i')       = 0.05;     % i
+    Data('a')       = 1e-6;     % a
     Data('Te')      = Data('La') / Data('Ra');  % Тэ
 
     AdditionalData('I') = [1 0 0;
@@ -44,8 +45,8 @@ function main()
         "demon1_5";
         "demon1_6";
         "demon1_7";
-%         "demon1_8";
-%         "demon1_9";
+        "demon1_8";
+        "demon1_9";
     ];
 
     for i = 1:size(filenames)

@@ -1,9 +1,7 @@
 % Пункт 7, исследование системы по критериям Рауса и Михайлова или по
 % по критериям Гурвица и Найквиста. 
 
-findSystemStability();
-
-function findSystemStability(Data, CalcData, AdditionalData)
+function [res] = findSystemStability(Data, CalcData, AdditionalData)
     buildLogarithmicAmplitudePhaseCharacteristic(Data, CalcData, ...
         AdditionalData);
 
@@ -18,34 +16,43 @@ function findSystemStability(Data, CalcData, AdditionalData)
         hurwitzCriteria(Data, CalcData, AdditionalData);
         nyquistCriteria(Data, CalcData, AdditionalData);
     end
+
+    res = true;
 end
 
 function buildLogarithmicAmplitudePhaseCharacteristic(Data, CalcData, ...
     AdditionalData)
     syms s;
 
-    Ws = (365.62*exp(-0.009*s))/(s*(0.00036*s^2 + 0.049*s + 1.0));
-    [n, d] = numden(Ws);
-    div = d(3);
-    num = num(1) / div;
-    den(1) = d(1) / div;
-    den(2) = d(2) / div;
-    den(3) = 1;
-%     W = tf(365.62, [0.00036, 0.049, 1, 0]);
-    disp(num);
-    disp(den);
-    W = tf(num, den);
+    % Костыль
+    [n, d] = numden(CalcData('Ws'));
+
+    num = coeffs(n);
+    den = coeffs(d);
+
+    numArr = zeros(1);
+    denArr = zeros(1, 4); 
+
+    numArr(1) = num(1) / den(1);
+    denArr(2) = den(2) / den(1);
+    denArr(1) = den(3) / den(1);
+    denArr(3) = 1;
+    denArr(4) = 0;
+
+    W = tf(numArr, denArr);
+%     W = tf(48.75, [0.000224, 0.039, 1, 0]);
     bode(W,1e-1:0.1:1e4); % ЛАФЧХ
+    grid on
 end
 
 function rouseCriteria(Data, CalcData, AdditionalData)
     disp(newline + "Метод Рауса");
 
     syms s;
+    
+    Fs = CalcData('Wzs');
 
-%     Fs = 1/(0.013675*s*(0.00036*s^2 + 0.049*s + 1.0) + 1.0); % при t = 0
-%     Fs = 1/(0.0071111*s*(0.000312*s^2 + 0.038*s + 1.0) + 1.0)
-%     Fs = 1/(0.00625*s*exp(0.007*s)*(0.00035*s^2 + 0.0405*s + 1.0) + 1.0);
+    disp(1);
 
     Ds = vpa(1 / Fs, 4);
     DsCoeffs = vpa(coeffs(Ds), 4);
@@ -84,11 +91,11 @@ function hurwitzCriteria(Data, CalcData, AdditionalData)
 
     disp("Характеристическое уравнение: ");
     fprintf("lambda ^ 3 + %f * lambda ^ 2 + %f * lambda + %f", ...
-        a2, a1, a0);
+        CalcData('a2'), CalcData('a1'), CalcData('a0'));
 
-    M = [a2 a0 0;
-         a3 a1 0;
-         0  a2 a0];
+    M = [CalcData('a2') CalcData('a0') 0;
+         CalcData('a3') CalcData('a1') 0;
+         0  CalcData('a2') CalcData('a0')];
     
     disp("Матрица Гурвица: ");
     disp(M);
@@ -114,12 +121,12 @@ function mikhailovCriteria(Data, CalcData, AdditionalData)
     
     disp("Характеристическое уравнение: ");
     fprintf("lambda ^ 3 + %f * lambda ^ 2 + %f * lambda + %f\n", ...
-        a2, a1, a0);
+        CalcData('a2'), CalcData('a1'), CalcData('a0'));
 
     syms w;
     
-    realEqn = a0 - a2 * w ^ 2 == 0;
-    imagEqn = a1 * w - w ^ 3 == 0;
+    realEqn = CalcData('a0') - CalcData('a2') * w ^ 2 == 0;
+    imagEqn = CalcData('a1') * w - w ^ 3 == 0;
 
     disp(realEqn);
     disp(imagEqn);
@@ -139,10 +146,7 @@ function nyquistCriteria(Data, CalcData, AdditionalData)
 
     syms s;
 
-    
-%     Fs = 1/(0.013675*s*(0.00036*s^2 + 0.049*s + 1.0) + 1.0);
-%     Fs = 1/(0.0071111*s*exp(0.007*s)*(0.000312*s^2 + 0.038*s + 1.0) + 1.0);
-%     Fs = 1/(0.00625*s*exp(0.007*s)*(0.00035*s^2 + 0.0405*s + 1.0) + 1.0);
+    Fs = CalcData('Wzs');
 
     nCoef = 1;
 
