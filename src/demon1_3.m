@@ -8,15 +8,15 @@ function [res] = findTransitionMatrix(Data, CalcData, AdditionalData)
     choice = input("y - решить методом Сильвестра / " + ...
                    "n - решить методом Кэли-Гамильтона [y/n]: ", 's');
     if (ischar(choice) && lower(choice) == 'y')
-        solveSylvesterMethod(Data, CalcData, AdditionalData);
+        CalcData("TrM") = solveSylvesterMethod(Data, CalcData, AdditionalData);
     else
-        solveCayleyMethod(Data, CalcData, AdditionalData);
+        CalcData("TrM") = solveCayleyMethod(Data, CalcData, AdditionalData);
     end
 
     res = true;
 end
 
-function solveSylvesterMethod(Data, CalcData, AdditionalData)
+function [TrM] = solveSylvesterMethod(Data, CalcData, AdditionalData)
     syms t; 
 
     roots = CalcData('roots');
@@ -25,6 +25,14 @@ function solveSylvesterMethod(Data, CalcData, AdditionalData)
     f2 = exp(roots(2) * t);
     f3 = exp(roots(3) * t);
     
+    disp("Собственные значения матрицы A: ");
+    disp("f(lambda1) =");
+    disp(vpa(f1, 3));
+    disp("f(lambda2) =");
+    disp(vpa(f2, 3));
+    disp("f(lambda3) =");
+    disp(vpa(f3, 3));
+
     MZ1 = MatrixZ(AdditionalData('A'), roots(2) .* AdditionalData('I'), ...
         roots(3) .* AdditionalData('I'), roots(1), roots(2), roots(3));
     MZ2 = MatrixZ(AdditionalData('A'), roots(1) .* AdditionalData('I'), ...
@@ -32,11 +40,20 @@ function solveSylvesterMethod(Data, CalcData, AdditionalData)
     MZ3 = MatrixZ(AdditionalData('A'), roots(1) .* AdditionalData('I'), ...
         roots(2) .* AdditionalData('I'), roots(3), roots(1), roots(2));
 
-    MSylvester = vpa(f1 .* MZ1 + f2 .* MZ2 + f3 .* MZ3, 5);
+    disp("Z(lambda1) =");
+    disp(vpa(MZ1, 3));
+    disp("Z(lambda2) =");
+    disp(vpa(MZ2, 3));
+    disp("Z(lambda3) =");
+    disp(vpa(MZ3, 3));
+
+    MSylvester = vpa(f1 .* MZ1 + f2 .* MZ2 + f3 .* MZ3, 3);
     disp("Матрица перехода методом Сильвестра: ");
+    disp("K(t) = f(lambda1) * Z(lambda1) + f(lambda2) * " + ...
+        "Z(lambda2) + f(lambda3) * Z(lambda3) =");
     disp(MSylvester);
 
-    CalcData("TrM") = MSylvester; % Матрица перехода
+    TrM = MSylvester; % Матрица перехода
 end
 
 function D_Z = MatrixZ(A, MLambdaLeft, MLambdaRight, ...
@@ -46,7 +63,7 @@ function D_Z = MatrixZ(A, MLambdaLeft, MLambdaRight, ...
     D_Z = ML * MR;
 end
 
-function solveCayleyMethod(Data, CalcData, AdditionalData)
+function [TrM] = solveCayleyMethod(Data, CalcData, AdditionalData)
     syms t;
 
     roots = CalcData('roots');
@@ -66,19 +83,20 @@ function solveCayleyMethod(Data, CalcData, AdditionalData)
     CInv = inv(C);
 
     disp('A = C^(-1) * E, где ');
-    disp('C^(-1):');
-    disp(vpa(CInv, 5));
-    disp('E:')
-    disp(vpa(E, 5));
+    disp('C^(-1) =');
+    disp(vpa(CInv, 3));
+    disp('E =')
+    disp(vpa(E, 3));
     
     AInv = inv(C) * E;
 
     MCayley = vpa(AInv(1,:) * AdditionalData('I') + AInv(2,:) * ...
         AdditionalData('A') + AInv(3,:) * ...
-        (AdditionalData('A') * AdditionalData('A')), 5);
+        (AdditionalData('A') * AdditionalData('A')), 3);
 
     disp("Матрица перехода методом Кэли-Гамильтона: ");
-    disp(MCayley);
+    disp("K(t) = a0 * I + a1 * A + a2 * A ^ 2 =");
+    disp(vpa(MCayley, 3));
 
-    CalcData("TrM") = MCayley; % Матрица перехода
+    TrM = MCayley; % Матрица перехода
 end

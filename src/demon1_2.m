@@ -22,14 +22,14 @@ function [res] = findCharacteristicEquationRoots(Data, CalcData, ...
          "уравнения: ");
     SM = lambda * AdditionalData('I') - AdditionalData('A');
     disp('Матрица состояния системы:');
-    disp(vpa(SM, 5));
+    disp(vpa(SM, 3));
 
     charEquation = det(SM);
     disp('Характеристическое уравнение:');
-    disp(vpa(charEquation, 5));
+    disp(vpa(charEquation, 3));
 
     eqn = charEquation == 0;
-    eqnRoots = vpa(solve(eqn, lambda), 5);
+    eqnRoots = vpa(solve(eqn, lambda), 3);
     disp('Корни характеристического уравнения:');
     if (max(size(eqnRoots)) ~= 3)
         disp("Количество корней характеристического уравнения не" + ...

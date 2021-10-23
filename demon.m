@@ -2,6 +2,7 @@
 % выдаваемого на 5 семестре студентам кафедры ИУ4
 
 addpath("src");
+addpath("src/demon_simulink");
 
 main();
 
@@ -63,13 +64,13 @@ function main()
         end
     end
 
-    disp("*********Конец работы программы*********");
+    disp(newline + "*********Конец работы программы*********" + newline);
 end
 
 function [userAns] = userInputInit(str)
 	out = "y - запустить " + str + ", n - завершить работу " + ...
           "программы [y/n]: ";
-    inp = input(out, 's');
+    inp = input(newline + out, 's');
     
     if (ischar(inp) && lower(inp) == 'y')
         userAns = true;

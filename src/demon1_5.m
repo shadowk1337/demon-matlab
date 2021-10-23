@@ -13,26 +13,29 @@ function [res] = findTransferFunction(Data, CalcData, AdditionalData)
          "передаточной функции системы по ошибке: ");
 
     Ws = vpa(findTransferFunctionOpened(Data, CalcData, AdditionalData, ...
-                                        Data('tau'), s), 5);
+                                        Data('tau'), s), 3);
     disp('Передаточная функция разомкнутой системы: ');
     disp(Ws);
     CalcData('Ws') = Ws;
 
     Wzs = vpa(findTransferFunctionClosed(Data, CalcData, AdditionalData, ...
-                                        Data('tau'), s), 5);
+                                        Data('tau'), s), 3);
     disp('Передаточная функция замкнутой системы: ');
     disp(Wzs);
     CalcData('Wzs') = Wzs;
 
     Fvs = vpa(findTransferFunctionByMistake(Data, CalcData, ...
                                          AdditionalData, Data('tau'), ...
-                                        s), 5);
+                                        s), 3);
     disp('Передаточная функция системы по ошибке: ');
     disp(Fvs);
     CalcData('Fvs') = Fvs;
 
     disp('Реакция системы при тао = 0: ');
     findSystemReaction(Data, CalcData, AdditionalData, s);
+
+    W3s = findTransferFunctionW3s(Data, CalcData, AdditionalData, s);
+    CalcData('W3s') = W3s;
 
     res = true;
 end
@@ -59,6 +62,11 @@ function [Fvs] = findTransferFunctionByMistake(Data, CalcData, ...
           Data('Te')) * s + 1) * s + ...
             Data('i') * Data('Kcap') * Data('Ky') * Data('Kd') * ...
             Data('Kg') * Data('Rk') * exp(-t * s));
+end
+
+function [W3s] = findTransferFunctionW3s(Data, CalcData, AdditionalData, s)
+    W3s = (Data('Kd') * Data('Ra')) / ((Data('Tm') * s + 1) * ...
+        (Data('La') * s + Data('Ra')));
 end
 
 function findSystemReaction(Data, CalcData, AdditionalData, s)

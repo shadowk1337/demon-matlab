@@ -10,33 +10,30 @@
 function [res] = findLA(Data, CalcData, AdditionalData)
     buildLogarithmicAmplitudePhaseCharacteristic(Data, CalcData, ...
                                                     AdditionalData);
-    
     syms t lambda k Ti;
 
-    la = input("Введите абсциссу пересечения верхнего графика с осью " + ...
-        "абсцисс: ");
+    la = input("Введите абсциссу пересечения графика с осью абсцисс: ");
 
     disp("Теорема Котельникова: ");
-    fprintf("τ (тао) < pi / %f\n", la);
+    fprintf("τ (тао) < pi / %u\n", la);
+    fprintf("τ (тао) = %u\n", Data('tau'));
 
     n = la / (100 * Data('tau'));
-    fprintf("n = %d\n", n);        
+    fprintf("n = %u\n", n);        
 
     A = subs(CalcData('TrM'), Data('tau'));
 
     disp('Разностные уравнения: ');
-    disp("N(kT) = A(T) * N(kT - T) + B(k, T) * Nзад, где ")
 
     disp("A(T) = K(T) = ");
-    disp(vpa(A, 4));
+    disp(vpa(A, 3));
 
     B = Data('tau') * A * AdditionalData('B');
 
     disp("B(k, T) = T * A(T) * B = ");
-    disp(vpa(B, 4));
+    disp(vpa(B, 3));
 
     B = B * Data('Ng');
-
     
     buildDiscreteView(Data, CalcData, AdditionalData, A, B, n);
     zTransform(Data, CalcData, AdditionalData, A, B, n);
@@ -54,17 +51,24 @@ function buildLogarithmicAmplitudePhaseCharacteristic(Data, CalcData, ...
         Ws = subs(CalcData('Ws'), w * 1i);
         wt = 0.1:1:1e3;
         Lw = zeros(size(wt));
+        zero = zeros(size(wt));
         for i = 1:max(size(wt))
             Lw(i) = 20 * log10(abs(subs(Ws, wt(i))));
+            zero(i) = 0;
         end
         semilogx(wt, Lw);
+        hold on
         grid on
+        title('ЛАЧХ')
+        xlabel('w');
+        ylabel('L(w)');
+        semilogx(wt, zero);
     end
 end
 
 function buildDiscreteView(Data, CalcData, AdditionalData, A, B, n)
-    A = vpa(A, 4);
-    B = vpa(B, 4);
+    A = vpa(A, 3);
+    B = vpa(B, 3);
 
     inp = input("Построить линейную амплитудную характеристику " + ...
         "системы (дискретный вид)? [y/n]: ", 's');
@@ -76,7 +80,7 @@ function buildDiscreteView(Data, CalcData, AdditionalData, A, B, n)
             N = A * N + B;
             y(i) = N(1,:);
         end
-     
+
         figure
         stairs(y);
         title("Линейная амплитудная характеристика системы " + ...
@@ -88,14 +92,18 @@ end
 function zTransform(Data, CalcData, AdditionalData, A, B, n)
     syms z;
 
-    A = vpa(A, 4);
-    B = vpa(B, 4);    
+    A = vpa(A, 3);
+    B = vpa(B, 3);    
 
     inp = input("Построить линейную амплитудную характеристику " + ...
         "системы? [y/n]: ", 's');
     if (ischar(inp) && lower(inp) == 'y')
         N = inv(z .* AdditionalData('I') - A) * (B .* (z / (z - 1)));
-        N = vpa(iztrans(N), 4);
+
+        disp("Вектор состояния N = ");
+        disp(vpa(N, 3));
+
+        N = vpa(iztrans(N), 3);
 
         x = 0:0.1:n;
         y = zeros(size(x));
@@ -103,11 +111,13 @@ function zTransform(Data, CalcData, AdditionalData, A, B, n)
             y(k) = subs(N(1,:), x(k));
             x(k) = x(k) / n;
         end
-        disp(6);
 
         plot(x, y);
         xlabel("t, с");
         title("Линейная амплитудная характеристика системы");
         grid on
+
+        disp("N после обратного z-преобразования =");
+        disp(N);
     end
 end

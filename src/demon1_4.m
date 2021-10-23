@@ -10,18 +10,25 @@ function [res] = findAnalyticalExpression(Data, CalcData, AdditionalData)
     K = subs(CalcData("TrM"), t, t - lambda); % преобразованная матрица 
                                               % перехода
 
+    disp("Преобразованная матрица перехода =");
+    disp(vpa(K, 3));
+
     integEq = K * AdditionalData('B');
     
-    MInt = int(integEq, lambda, 0, t) * Data('Ng');
+    N = int(integEq, lambda, 0, t) * Data('Ng');
 
-    choice = input("Построить график реакции системы на входное " + ...
+    disp("Вектор состояния:");
+    disp("N(t) = integral(0, t)((K(t - lambda) * B * Nзад)dlambda) =");
+    disp(vpa(N, 3));
+
+    choice = input("\nПостроить график реакции системы на входное " + ...
         "ступенчатое воздействие? [y/n]: ", 's');
 
     if (ischar(choice) && lower(choice) == 'y')
         time = 0:0.005:1;
         y = zeros(size(time));
         for i = 1:max(size(time))
-            y(i) = subs(MInt(1,:), time(i));
+            y(i) = subs(N(1,:), time(i));
         end
 
         plot(time, y);

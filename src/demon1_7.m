@@ -2,14 +2,16 @@
 % по критериям Гурвица и Найквиста. 
 
 function [res] = findSystemStability(Data, CalcData, AdditionalData)
-    buildLogarithmicAmplitudePhaseCharacteristic(Data, CalcData, ...
-        AdditionalData);
+    inp = input("Построить ЛАФЧХ? [y/n]: ", 's');
+    if (ischar(inp) && lower(inp) == 'y')
+        buildLogarithmicAmplitudePhaseCharacteristic(Data, CalcData, ...
+                                                        AdditionalData);
+    end
 
-    choice = input("y - решить по критериям Рауса и Михайлова/ " + ...
+    inp = input("y - решить по критериям Рауса и Михайлова/ " + ...
                    "n - решить по критериям Гурвица и Найквиста" + ...
                    " [y/n]: ", 's');
-
-    if (ischar(choice) && lower(choice) == 'y')
+    if (ischar(inp) && lower(inp) == 'y')
         rouseCriteria(Data, CalcData, AdditionalData);
         mikhailovCriteria(Data, CalcData, AdditionalData);
     else
@@ -40,7 +42,6 @@ function buildLogarithmicAmplitudePhaseCharacteristic(Data, CalcData, ...
     denArr(4) = 0;
 
     W = tf(numArr, denArr);
-%     W = tf(48.75, [0.000224, 0.039, 1, 0]);
     bode(W,1e-1:0.1:1e4); % ЛАФЧХ
     grid on
 end
@@ -51,8 +52,6 @@ function rouseCriteria(Data, CalcData, AdditionalData)
     syms s;
     
     Fs = CalcData('Wzs');
-
-    disp(1);
 
     Ds = vpa(1 / Fs, 4);
     DsCoeffs = vpa(coeffs(Ds), 4);
@@ -80,9 +79,11 @@ function rouseCriteria(Data, CalcData, AdditionalData)
 
     if ((c11 >= 0 && c12 >= 0 && c13 >= 0 && c14 >= 0) ||...
         (c11 < 0 && c12 < 0 && c13 < 0 && c14 < 0))
-        disp("Все элементы первого столбца одного знака - система устойчива");
+        disp("Все элементы первого столбца одного знака - система " + ...
+            "устойчива");
     else
-        disp("Элементы первого столбца не одного знака - система неустойчива");
+        disp("Элементы первого столбца не одного знака - система " + ...
+            "неустойчива");
     end
 end
 
@@ -90,7 +91,7 @@ function hurwitzCriteria(Data, CalcData, AdditionalData)
     disp(newline + "Метод Гурвица");
 
     disp("Характеристическое уравнение: ");
-    fprintf("lambda ^ 3 + %f * lambda ^ 2 + %f * lambda + %f", ...
+    fprintf("lambda ^ 3 + %.4g * lambda ^ 2 + %.4g * lambda + %.4g\n", ...
         CalcData('a2'), CalcData('a1'), CalcData('a0'));
 
     M = [CalcData('a2') CalcData('a0') 0;
@@ -98,21 +99,21 @@ function hurwitzCriteria(Data, CalcData, AdditionalData)
          0  CalcData('a2') CalcData('a0')];
     
     disp("Матрица Гурвица: ");
-    disp(M);
+    disp(vpa(M, 5));
 
     det1 = det(M(1));
     det2 = det(M(1:2,1:2));
     det3 = det(M);
 
-    fprintf("det1 = %f\n", det1);
-    fprintf("det2 = %f\n", det2);
-    fprintf("det3 = %f\n", det3);
+    fprintf("det1 = %.5g\n", det1);
+    fprintf("det2 = %.5g\n", det2);
+    fprintf("det3 = %.5g\n", det3);
 
     if (det1 < 0 || det2 < 0 || det3 < 0) 
-        disp("Система неустойчива, так как один или несколько определителей" + ...
-            " меньше нуля");
+        disp("Система неустойчива, так как один или несколько " + ...
+            "определителей < нуля");
     else 
-        disp("Система устойчива");
+        disp("Система устойчива, так как все определители >= нуля");
     end
 end
 
@@ -120,7 +121,7 @@ function mikhailovCriteria(Data, CalcData, AdditionalData)
     disp(newline + "Метод Михайлова");
     
     disp("Характеристическое уравнение: ");
-    fprintf("lambda ^ 3 + %f * lambda ^ 2 + %f * lambda + %f\n", ...
+    fprintf("lambda ^ 3 + %.4g * lambda ^ 2 + %.4g * lambda + %.4g\n", ...
         CalcData('a2'), CalcData('a1'), CalcData('a0'));
 
     syms w;
@@ -128,16 +129,16 @@ function mikhailovCriteria(Data, CalcData, AdditionalData)
     realEqn = CalcData('a0') - CalcData('a2') * w ^ 2 == 0;
     imagEqn = CalcData('a1') * w - w ^ 3 == 0;
 
-    disp(realEqn);
-    disp(imagEqn);
+    disp(vpa(realEqn, 3));
+    disp(vpa(imagEqn, 3));
 
     Pw = solve(realEqn, w);
     Qw = solve(imagEqn, w);
 
     if (max(Pw) > max(Qw))
-        fprintf("%f > %f - система неустойчива\n", max(Pw), max(Qw));
+        fprintf("%.4g > %.4g - система неустойчива\n", max(Pw), max(Qw));
     else 
-        fprintf("%f <= %f - система устойчива\n", max(Pw), max(Qw));
+        fprintf("%.4g <= %.4g - система устойчива\n", max(Pw), max(Qw));
     end
 end
 
@@ -146,22 +147,30 @@ function nyquistCriteria(Data, CalcData, AdditionalData)
 
     syms s;
 
-    Fs = CalcData('Wzs');
+%     Fs = CalcData('Wzs');
+% 
+%     nCoef = 1;
+% 
+%     Ds = vpa(1 / Fs, 4);
+%     dCoef = vpa(coeffs(Ds), 4);
 
-    nCoef = 1;
+    Ws = CalcData('Ws');
+    [n, d] = numden(Ws);
+    nCoef = vpa(coeffs(n), 4);
+    dCoef = vpa(coeffs(d), 4);
 
-    Ds = vpa(1 / Fs, 4);
-    dCoef = vpa(coeffs(Ds), 4);
+    disp(nCoef);
+    disp(dCoef);
 
-    inp = input("Построить график Найквиста? [y/n]: ", 's');
-    if (ischar(inp) && lower(inp) == 'y')
-        l = toCell(nCoef);
-        r = toCell(dCoef);
-        nyquist(tf(l, r));
-        disp("Если на графике точка (-1; 0)" + ...
-            " лежит внутри фигуры Найквиста, то система устойчива, если не " + ...
-            "лежит внутри - то система неустойчива");
-    end
+%     inp = input("Построить график Найквиста? [y/n]: ", 's');
+%     if (ischar(inp) && lower(inp) == 'y')
+%         l = toCell(nCoef);
+%         r = toCell(dCoef);
+%         nyquist(tf(l, r));
+%         disp("Если на графике точка (-1; 0)" + ...
+%             " лежит внутри фигуры Найквиста, то система устойчива, если не " + ...
+%             "лежит внутри - то система неустойчива");
+%     end
 end
 
 function [v] = toCell(D)
