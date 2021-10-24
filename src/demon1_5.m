@@ -65,8 +65,8 @@ function [Fvs] = findTransferFunctionByMistake(Data, CalcData, ...
 end
 
 function [W3s] = findTransferFunctionW3s(Data, CalcData, AdditionalData, s)
-    W3s = (Data('Kd') * Data('Ra')) / ((Data('Tm') * s + 1) * ...
-        (Data('La') * s + Data('Ra')));
+    W3s = Data('Kd') / ((Data('Tm') * s + 1) * ...
+        (Data('Te') * s + 1));
 end
 
 function findSystemReaction(Data, CalcData, AdditionalData, s)

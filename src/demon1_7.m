@@ -47,12 +47,13 @@ function buildLogarithmicAmplitudePhaseCharacteristic(Data, CalcData, ...
 end
 
 function rouseCriteria(Data, CalcData, AdditionalData)
-    disp(newline + "Метод Рауса");
+    disp(newline + "Метод Рауса" + newline);
 
     syms s;
     
     Fs = CalcData('Wzs');
 
+    % Костыль
     Ds = vpa(1 / Fs, 4);
     DsCoeffs = vpa(coeffs(Ds), 4);
 
@@ -88,7 +89,7 @@ function rouseCriteria(Data, CalcData, AdditionalData)
 end
 
 function hurwitzCriteria(Data, CalcData, AdditionalData)
-    disp(newline + "Метод Гурвица");
+    disp(newline + "Метод Гурвица" + newline);
 
     disp("Характеристическое уравнение: ");
     fprintf("lambda ^ 3 + %.4g * lambda ^ 2 + %.4g * lambda + %.4g\n", ...
@@ -118,7 +119,7 @@ function hurwitzCriteria(Data, CalcData, AdditionalData)
 end
 
 function mikhailovCriteria(Data, CalcData, AdditionalData)
-    disp(newline + "Метод Михайлова");
+    disp(newline + "Метод Михайлова" + newline);
     
     disp("Характеристическое уравнение: ");
     fprintf("lambda ^ 3 + %.4g * lambda ^ 2 + %.4g * lambda + %.4g\n", ...
@@ -129,48 +130,56 @@ function mikhailovCriteria(Data, CalcData, AdditionalData)
     realEqn = CalcData('a0') - CalcData('a2') * w ^ 2 == 0;
     imagEqn = CalcData('a1') * w - w ^ 3 == 0;
 
+    disp("Действительная часть:")
     disp(vpa(realEqn, 3));
+    disp("Мнимая часть:");
     disp(vpa(imagEqn, 3));
 
     Pw = solve(realEqn, w);
     Qw = solve(imagEqn, w);
 
     if (max(Pw) > max(Qw))
-        fprintf("%.4g > %.4g - система неустойчива\n", max(Pw), max(Qw));
+        fprintf("%.4g (корень действительной части) > %.4g (корень " + ...
+            "мнимой части)- система неустойчива\n", max(Pw), max(Qw));
     else 
-        fprintf("%.4g <= %.4g - система устойчива\n", max(Pw), max(Qw));
+        fprintf("%.4g (корень действительной части) <= %.4g (корень " + ...
+            "мнимой части) - система устойчива\n", max(Pw), max(Qw));
     end
 end
 
 function nyquistCriteria(Data, CalcData, AdditionalData)
-    disp(newline + "Метод Найквиста");
+    disp(newline + "Метод Найквиста" + newline);
 
     syms s;
 
-%     Fs = CalcData('Wzs');
-% 
-%     nCoef = 1;
-% 
-%     Ds = vpa(1 / Fs, 4);
-%     dCoef = vpa(coeffs(Ds), 4);
+    % Костыль
+    Ws = CalcData('Ws') + 1;
+    [n, d] = numden(vpa(Ws, 4));
+    num = vpa(coeffs(n), 4);
+    den = vpa(coeffs(d), 4);
 
-    Ws = CalcData('Ws');
-    [n, d] = numden(Ws);
-    nCoef = vpa(coeffs(n), 4);
-    dCoef = vpa(coeffs(d), 4);
+    numArr = zeros(1, 4);
+    denArr = zeros(1, 3);
 
-    disp(nCoef);
-    disp(dCoef);
+    numArr(1) = num(4) / den(1);
+    numArr(2) = num(3) / den(1);
+    numArr(3) = num(2) / den(1);
+    numArr(4) = num(1) / den(1);
 
-%     inp = input("Построить график Найквиста? [y/n]: ", 's');
-%     if (ischar(inp) && lower(inp) == 'y')
-%         l = toCell(nCoef);
-%         r = toCell(dCoef);
-%         nyquist(tf(l, r));
-%         disp("Если на графике точка (-1; 0)" + ...
-%             " лежит внутри фигуры Найквиста, то система устойчива, если не " + ...
-%             "лежит внутри - то система неустойчива");
-%     end
+    denArr(1) = den(3) / den(1);
+    denArr(2) = den(2) / den(1);
+    denArr(3) = den(1) / den(1);
+%     denArr(4) = 0;
+
+    inp = input("Построить график Найквиста? [y/n]: ", 's');
+    if (ischar(inp) && lower(inp) == 'y')
+        l = toCell(numArr);
+        r = toCell(denArr);
+        nyquist(tf(l, r));
+        disp("Если на графике точка (-1; 0)" + ...
+            " лежит внутри фигуры Найквиста, то система неустойчива, " + ...
+            "если не лежит внутри - то система устойчива");
+    end
 end
 
 function [v] = toCell(D)
