@@ -81,7 +81,6 @@ function buildDiscreteView(Data, CalcData, AdditionalData, A, B, n)
             y(i) = N(1,:);
         end
 
-        figure
         stairs(y);
         title("Линейная амплитудная характеристика системы " + ...
             "(дискретный вид)");
