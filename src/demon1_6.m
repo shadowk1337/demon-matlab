@@ -107,15 +107,19 @@ function zTransform(Data, CalcData, AdditionalData, A, B, n)
 
         x = 0:0.1:n;
         y = zeros(size(x));
+        zero = zeros(size(x));
         for k = 1:max(size(x))
             y(k) = subs(N(1,:), x(k));
             x(k) = x(k) / n;
+            zero(k) = Data('Ng');
         end
 
         plot(x, y);
         xlabel("t, с");
         title("Линейная амплитудная характеристика системы");
         grid on
+        hold on
+        plot(x, zero);
 
         disp("N после обратного z-преобразования =");
         disp(N);

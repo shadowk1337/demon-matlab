@@ -88,7 +88,10 @@ function [TrM] = solveCayleyMethod(Data, CalcData, AdditionalData)
     disp('E =')
     disp(vpa(E, 3));
     
-    AInv = inv(C) * E;
+    AInv = CInv * E;
+
+    disp('A =')
+    disp(vpa(AInv, 3));
 
     MCayley = vpa(AInv(1,:) * AdditionalData('I') + AInv(2,:) * ...
         AdditionalData('A') + AInv(3,:) * ...

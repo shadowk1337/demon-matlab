@@ -27,8 +27,10 @@ function [res] = findAnalyticalExpression(Data, CalcData, AdditionalData)
     if (ischar(choice) && lower(choice) == 'y')
         time = 0:0.005:1;
         y = zeros(size(time));
+        zero = zeros(size(time));
         for i = 1:max(size(time))
             y(i) = subs(N(1,:), time(i));
+            zero(i) = Data('Ng');
         end
 
         plot(time, y);
@@ -36,6 +38,8 @@ function [res] = findAnalyticalExpression(Data, CalcData, AdditionalData)
         xlabel("t, сек");
         ylabel("N(t)");
         grid on
+        hold on
+        plot(time, zero);
     end
 
     res = true;

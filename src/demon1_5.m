@@ -80,13 +80,17 @@ function findSystemReaction(Data, CalcData, AdditionalData, s)
     if (ischar(choice) && lower(choice) == 'y')
         time = 0.001:0.005:1;
         y = zeros(size(time));
+        zero = zeros(size(time));
         for i = 1:max(size(time))
             y(i) = subs(Nt, time(i));
+            zero(i) = Data('Ng');
         end
         plot(time, y);
         title("График реакции системы на входное воздействие Nзад");
         xlabel("t, сек");
         ylabel("N(t)");
         grid on
+        hold on
+        plot(time, zero)
     end
 end
